@@ -48,6 +48,10 @@ int main(int argc, char **argv) {
             continue;
         
         printf("Packet length:%d\n", header->len);
+
+        printf("Dump packet...");
+        print_hex_memory((const void *)pkt_data, header->len);
+
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
     }

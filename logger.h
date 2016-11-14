@@ -3,7 +3,20 @@
 
 #include <pcap/pcap.h>
 #include <netinet/ether.h>
+#include <stdio.h>
 #include "sniffer.h"
+
+void print_hex_memory(const void *mem, int len) {
+  int i;
+  unsigned char *p = (unsigned char *)mem;
+  for (i = 0;i < len; i++) {
+    printf("0x%02x ", p[i]);
+    if (i % 16 == 0)
+      printf("\n");
+  }
+  printf("\n");
+}
+
 
 void log_headers(struct hdrs *headers) {
 	struct ethernet_hdr *ethernet_header = headers->ethernet_header;
