@@ -4,6 +4,9 @@
 #include <pcap/pcap.h>
 #include <netinet/ether.h>
 #include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "sniffer.h"
 
 void print_hex_memory(const void *mem, int len) {
