@@ -5,7 +5,7 @@
 #include <netinet/ether.h>
 #include "sniffer.h"
 
-void log_headers(struct *hdrs headers) {
+void log_headers(struct hdrs *headers) {
 	struct ethernet_hdr *ethernet_header = headers->ethernet_header;
 	struct ether_addr ether_src_addr;
 	struct ether_addr ether_dst_addr;

@@ -135,7 +135,7 @@ struct hdrs {
   u_char *payload;
 };
 
-pcap_t *open_phandle(char *dev_name, char *filter_rule, char *errbuf) {
+pcap_t *open_phandle(char *dev_name, char *errbuf) {
     pcap_t *phandle = pcap_create(dev_name, errbuf);
     if (phandle == NULL)
         return NULL;

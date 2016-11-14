@@ -2,6 +2,7 @@
 #define __ANALYZER_H__
 
 #include <pcap/pcap.h>
+#include <string.h>
 #include "sniffer.h"
 
 struct hdrs *analyze_packet(u_char *packet) {
@@ -19,7 +20,7 @@ struct hdrs *analyze_packet(u_char *packet) {
 		ret->icmp_header = (struct icmp_hdr *)(packet + ETHER_HDR_LEN + ip_header_length);
 		ret->tcp_header = NULL;
 		ret->payload = NULL;
-		ret->protocol = "ICMP";
+		strcpy(ret->protocol, "ICMP");
 	} else if (protocol == IP_TCP) {
 		ret->icmp_header = NULL;
 		ret->tcp_header = (struct tcp_hdr *)(packet + ETHER_HDR_LEN + ip_header_length);
@@ -29,17 +30,17 @@ struct hdrs *analyze_packet(u_char *packet) {
 			exit(1);
 		}
 		ret->payload = (char *)(packet + ETHER_HDR_LEN + ip_header_length + tcp_header_length);
-		ret->protocol = "TCP";
+		strcpy(ret->protocol, "TCP");
 	} else if (protocol == IP_UDP) {
 		ret->icmp_header = NULL;
 		ret->tcp_header = NULL;
 		ret->payload = NULL;
-		ret->protocol = "UDP"
+		strcpy(ret->protocol, "UDP");
 	} else {
 		ret->icmp_header = NULL;
 		ret->tcp_header = NULL;
 		ret->payload = NULL;
-		ret->protocol = "Other"
+		strcpy(ret->protocol, "Other");
 	}
 	return ret;
 }

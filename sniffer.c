@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (pcap_datalink(phandle) != DLT_EN10MB) {
-		printf("%s is not an Ethernet.\n", dev);
+		printf("%s is not an Ethernet.\n", dev_name);
 		exit(1);
 	}
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
             continue;
         
         printf("Packet length:%d\n", header->len);
-        struct *hdrs headers = analyze_packet(pkt_data);
+        struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
     }
 
