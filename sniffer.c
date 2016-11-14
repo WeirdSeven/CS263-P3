@@ -37,6 +37,18 @@ pcap_t *open_phandle(char *dev_name, char *errbuf) {
 	pcap_set_promisc(phandle, 1);
 	pcap_set_snaplen(phandle, 65535);
 	pcap_activate(phandle);
+
+	const char *filter_rule = "dst port 22"
+	struct bpf_program fp;
+	if (pcap_compile(phandle, &fp, filter_rule, 0, PCAP_NETMASK_UNKNOWN) == -1) {
+		printf("Filter compile error: %s.\n", pcap_geterr(phandle));
+		exit(1);
+	}
+	if (pcap_setfilter(phandle, &fp) == -1) {
+		printf("Filter set error: %s.\n", pcap_geterr(phandle));
+		exit(1);
+	}
+
 	return phandle;
 }
 
@@ -50,11 +62,11 @@ int main(int argc, char **argv) {
 	} else if (argc == 2) {
 		dev_name = argv[1];
 		if (!device_exists(dev_name)) {
-			printf("Device does not exist.");
+			printf("Device does not exist.\n");
 			exit(1);
 		}
 	} else {
-		printf("Usage: sniffer [dev_name]");
+		printf("Usage: sniffer [dev_name]\n");
 		exit(1);
 	}
 
