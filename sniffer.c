@@ -25,6 +25,7 @@ int main() {
 		} else {
 			printf("No description.\n");
 		}
+		dev = dev->next;
 	}
 
 
