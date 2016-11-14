@@ -1,4 +1,6 @@
-#include #include <pcap/pcap.h>
+#include <pcap/pcap.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "sniffer.h"
 #include "analyzer.h"
