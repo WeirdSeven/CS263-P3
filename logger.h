@@ -23,12 +23,13 @@ void print_hex_memory(const void *mem, int len) {
 
 void log_headers(struct hdrs *headers) {
 	struct ethernet_hdr *ethernet_header = headers->ethernet_header;
-	printf("ETHERNET: src[%s] dst[%s]", ether_ntoa((struct ether_addr*)&ethernet_header[6]), 
+	printf("ETHERNET: src[%s] dst[%s]\n", ether_ntoa((struct ether_addr*)&ethernet_header[6]), 
 										ether_ntoa((struct ether_addr*)&ethernet_header[0]));
 
 	struct ip_hdr *ip_header = headers->ip_header;
 	printf("IP: src[%s] dst[%s]", inet_ntoa(ip_header->ip_src_addr),
 		                          inet_ntoa(ip_header->ip_dst_addr));
+	printf("   ip_hdr_len[%d] ip_data_len[%d] Protocol: %s\n", ip_header->ip_hlen, ((ip_header->len) - (ip_header->hlen)), headers->protocol);
 	//printf("ETHERNET: src[0c:df:27:16:b8:30] dst[50:5a:00:12:35:02]");
 }
 

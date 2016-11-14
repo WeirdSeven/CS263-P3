@@ -21,7 +21,7 @@ struct hdrs *analyze_packet(const u_char *packet) {
 		ret->icmp_header = (struct icmp_hdr *)(packet + ETHER_HDR_LEN + ip_header_length);
 		ret->tcp_header = NULL;
 		ret->payload = NULL;
-		strcpy(ret->protocol, "ICMP");
+		strcpy(ret->protocol, "IP_ICMP");
 	} else if (protocol == IP_TCP) {
 		printf("TCP packet!\n");
 		ret->icmp_header = NULL;
@@ -32,19 +32,19 @@ struct hdrs *analyze_packet(const u_char *packet) {
 			exit(1);
 		}
 		ret->payload = (char *)(packet + ETHER_HDR_LEN + ip_header_length + tcp_header_length);
-		strcpy(ret->protocol, "TCP");
+		strcpy(ret->protocol, "IP_TCP");
 	} else if (protocol == IP_UDP) {
 		printf("UDP packet!\n");
 		ret->icmp_header = NULL;
 		ret->tcp_header = NULL;
 		ret->payload = NULL;
-		strcpy(ret->protocol, "UDP");
+		strcpy(ret->protocol, "IP_UDP");
 	} else {
 		printf("Other packet!\n");
 		ret->icmp_header = NULL;
 		ret->tcp_header = NULL;
 		ret->payload = NULL;
-		strcpy(ret->protocol, "Other");
+		strcpy(ret->protocol, "other");
 	}
 	return ret;
 }
