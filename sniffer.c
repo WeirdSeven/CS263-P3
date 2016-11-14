@@ -38,7 +38,7 @@ pcap_t *open_phandle(char *dev_name, char *errbuf) {
 	pcap_set_snaplen(phandle, 65535);
 	pcap_activate(phandle);
 
-	const char *filter_rule = "dst port 22"
+	const char *filter_rule = "dst port 22";
 	struct bpf_program fp;
 	if (pcap_compile(phandle, &fp, filter_rule, 0, PCAP_NETMASK_UNKNOWN) == -1) {
 		printf("Filter compile error: %s.\n", pcap_geterr(phandle));
