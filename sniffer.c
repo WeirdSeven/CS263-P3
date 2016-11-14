@@ -7,52 +7,6 @@
 #include "analyzer.h"
 #include "logger.h"
 
-
-int device_exists(char *target) {
-	pcap_if_t *alldevsp;
-	char errbuf[PCAP_ERRBUF_SIZE];
-
-	if (pcap_findalldevs(&alldevsp, errbuf) == -1) {
-		pcap_freealldevs(alldevsp);
-		return 0;
-	}
-
-	pcap_if_t *dev = alldevsp;
-	while(dev) {
-		if (strcmp(dev->name, target) == 0) {
-			pcap_freealldevs(alldevsp);
-			return 1;
-		}		
-		dev = dev->next;
-	}
-	pcap_freealldevs(alldevsp);
-	return 0;
-}
-
-pcap_t *open_phandle(char *dev_name, char *errbuf) {
-	pcap_t *phandle = pcap_create(dev_name, errbuf);
-	if (phandle == NULL)
-		return NULL;
-
-	pcap_set_promisc(phandle, 1);
-	pcap_set_snaplen(phandle, 65535);
-	pcap_activate(phandle);
-
-	const char *filter_rule = "dst port 22";
-	struct bpf_program fp;
-	if (pcap_compile(phandle, &fp, filter_rule, 0, PCAP_NETMASK_UNKNOWN) == -1) {
-		printf("Filter compile error: %s.\n", pcap_geterr(phandle));
-		exit(1);
-	}
-	if (pcap_setfilter(phandle, &fp) == -1) {
-		printf("Filter set error: %s.\n", pcap_geterr(phandle));
-		exit(1);
-	}
-
-	return phandle;
-}
-
-
 int main(int argc, char **argv) {
 	char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -76,6 +30,13 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
+	if (pcap_datalink(phandle) != DLT_EN10MB) {
+		printf("%s is not an Ethernet.\n", dev);
+		exit(1);
+	}
+
+	apply_filter(phandle, "dst port 22");
+
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
 	// Retrieve the packets 
@@ -87,6 +48,8 @@ int main(int argc, char **argv) {
             continue;
         
         printf("Packet length:%d\n", header->len);
+        struct *hdrs headers = analyze_packet(pkt_data);
+        log_headers(headers);
     }
 
     if (res == -1) {

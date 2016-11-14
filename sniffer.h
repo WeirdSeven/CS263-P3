@@ -126,5 +126,59 @@ struct icmp_hdr{
 #define ICMP_ADDRESS		17	/* Address Mask Request		*/
 #define ICMP_ADDRESSREPLY	18	/* Address Mask Reply		*/
 
+struct hdrs {
+  struct ethernet_hdr *ethernet_header;
+  struct ip_hdr *ip_header;
+  struct tcp_hdr *tcp_header;
+  struct icmp_hdr *icmp_header;
+  char protocol[10];
+  u_char *payload;
+};
+
+pcap_t *open_phandle(char *dev_name, char *filter_rule, char *errbuf) {
+    pcap_t *phandle = pcap_create(dev_name, errbuf);
+    if (phandle == NULL)
+        return NULL;
+
+    pcap_set_promisc(phandle, 1);
+    pcap_set_snaplen(phandle, 65535);
+    pcap_activate(phandle);    
+    return phandle;
+}
+
+void apply_filter(pcap_t *phandle, char *filter_expression) {
+    struct bpf_program fp;
+    if (pcap_compile(phandle, &fp, filter_expression, 0, PCAP_NETMASK_UNKNOWN) == -1) {
+        printf("Filter compile error: %s.\n", pcap_geterr(phandle));
+        exit(1);
+    }
+    if (pcap_setfilter(phandle, &fp) == -1) {
+        printf("Filter set error: %s.\n", pcap_geterr(phandle));
+        exit(1);
+    }
+    pcap_freecode(&fp);
+}
+
+int device_exists(char *target) {
+    pcap_if_t *alldevsp;
+    char errbuf[PCAP_ERRBUF_SIZE];
+
+    if (pcap_findalldevs(&alldevsp, errbuf) == -1) {
+        pcap_freealldevs(alldevsp);
+        return 0;
+    }
+
+    pcap_if_t *dev = alldevsp;
+    while(dev) {
+        if (strcmp(dev->name, target) == 0) {
+            pcap_freealldevs(alldevsp);
+            return 1;
+        }       
+        dev = dev->next;
+    }
+    pcap_freealldevs(alldevsp);
+    return 0;
+}
+
 
 #endif  //#ifndef __SNIFFER_H__
