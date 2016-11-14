@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-#include <machine/endian.h>
+#include <endian.h>
 
 //Ethernet addresses are 6 bytes long.
 #define ETH_ADDR_LEN	6
