@@ -25,7 +25,7 @@ void log_headers(struct hdrs *headers) {
 
 	struct ip_hdr *ip_header = headers->ip_header;
 	printf("IP: src[%s] dst[%s]", inet_ntoa(ip_header->ip_src_addr),
-		                          inet_ntoa(ip_header->ip_dst_addr))
+		                          inet_ntoa(ip_header->ip_dst_addr));
 	//printf("ETHERNET: src[0c:df:27:16:b8:30] dst[50:5a:00:12:35:02]");
 }
 
