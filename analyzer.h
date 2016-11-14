@@ -5,7 +5,7 @@
 #include <string.h>
 #include "sniffer.h"
 
-struct hdrs *analyze_packet(u_char *packet) {
+struct hdrs *analyze_packet(const u_char *packet) {
 	struct hdrs *ret = (struct hdrs *)malloc(sizeof(struct hdrs));
 	ret->ethernet_header = (struct ethernet_hdr *)packet;
 	ret->ip_header = (struct ip_hdr *)(packet + ETHER_HDR_LEN);
