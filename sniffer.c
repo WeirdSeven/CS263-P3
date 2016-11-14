@@ -28,7 +28,7 @@ int main() {
 	}
 
 
-	pcap_t phandle;
+	pcap_t *phandle;
 
 
 
