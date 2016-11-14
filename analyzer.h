@@ -10,6 +10,8 @@ struct hdrs *analyze_packet(const u_char *packet) {
 	ret->ethernet_header = (struct ethernet_hdr *)packet;
 	ret->ip_header = (struct ip_hdr *)(packet + ETHER_HDR_LEN);
 	int ip_header_length = ret->ip_header->ip_hlen;
+	int ip_header_version = ret->ip_header->version;
+	printf("IP header version: %d .\n", ip_header_version);
 	if (ip_header_length < 20) {
 		printf("Invalid IP header length: %d bytes.\n", ip_header_length);
 		exit(1);
