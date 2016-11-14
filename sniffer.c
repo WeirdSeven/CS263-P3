@@ -30,7 +30,6 @@ int device_exists(char *target) {
 }
 
 pcap_t *open_phandle(char *dev_name, char *errbuf) {
-	char errbuf[PCAP_ERRBUF_SIZE];
 	pcap_t *phandle = pcap_create(dev_name, errbuf);
 	if (phandle == NULL)
 		return NULL;
