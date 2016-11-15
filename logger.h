@@ -34,7 +34,7 @@ void log_headers(struct hdrs *headers) {
 															    headers->protocol);*/
 
 	swtich (ip_header->ip_protocol) {
-		case IP_ICMP:
+		/*case IP_ICMP:
 			break;
 		case IP_TCP: {
 			struct tcp_hdr *tcp_header = headers->tcp_header;
@@ -45,7 +45,7 @@ void log_headers(struct hdrs *headers) {
 			break;
 		}
 		default: 
-			break;
+			break;*/
 	}
 	//printf("ETHERNET: src[0c:df:27:16:b8:30] dst[50:5a:00:12:35:02]");
 }
