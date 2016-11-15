@@ -222,8 +222,8 @@ int main(int argc, char **argv) {
         log_headers(headers);
 
         if (headers->tcp_header) {
-        	global_seq = headers->tcp_header->tcp_seq;
-        	global_ack = headers->tcp_header->tcp_ack;
+        	global_seq = ntohl(headers->tcp_header->tcp_seq);
+        	global_ack = ntohl(headers->tcp_header->tcp_ack);
         }
 
         //char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
