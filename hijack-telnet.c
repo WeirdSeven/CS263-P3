@@ -17,8 +17,8 @@
 #include "analyzer.h"
 #include "logger.h"
 
-u_int32_t global_sequence;
-u_int32_t global_acknowledge;
+u_int32_t global_sequence = 0;
+u_int32_t global_acknowledge = 0;
 
 /*void attack_handler (int signum) {
   char command[4] = "boom"
@@ -60,6 +60,11 @@ char *get_ip_address(char *interface) {
 	close(fd);
 
 	return inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
+}
+
+void SIGINT_handler(int signum) {
+	printf("In the handler!\n");
+	exit(0);
 }
 
 int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, libnet_ptag_t *ipv4_tag) {
@@ -145,6 +150,17 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
+	struct sigaction action;
+	action.sa_handler = SIGINT_handler
+	if (sigaction(SIGINT, action, NULL) < 0) {
+		perror("SIGINT sigaction");
+		exit(1);
+	}
+	if (sigaction(SIGQUIT, action, NULL) < 0) {
+		perror("SIGINT sigaction");
+		exit(1);
+	}
+
 	pcap_t *phandle = open_phandle(dev_name, errbuf);
 	if (phandle == NULL) {
 		printf("Error: %s\n", errbuf);
@@ -203,6 +219,10 @@ int main(int argc, char **argv) {
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
 
+        if (headers->tcp_headers) {
+        	global_seq = headers->tcp_headers->tcp_seq;
+        	global_ack = headers->tcp_headers->tcp_ack;
+        }
 
         //char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
         //char *source_ip_address = (char *)malloc(strlen(temp2) + 1);
