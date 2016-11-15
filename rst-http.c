@@ -136,11 +136,11 @@ int main(int argc, char **argv) {
         if(res == 0)
             continue;
 
-        //printf("Packet cap length:%d\n", header->caplen);
-        //printf("Packet length:%d\n", header->len);
+        printf("Packet cap length:%d\n", header->caplen);
+        printf("Packet length:%d\n", header->len);
 
-        //printf("Dump packet...");
-        //print_char_array(pkt_data, header->len);
+        printf("Dump packet...");
+        print_char_array(pkt_data, header->len);
 
         struct hdrs *headers = analyze_packet(pkt_data);
         send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
