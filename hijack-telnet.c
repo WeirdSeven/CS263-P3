@@ -66,6 +66,67 @@ void SIGINT_handler(int signum) {
 	printf("In the handler!\n");
 	printf("seq: [%u]\n", global_seq);
 	printf("ack: [%u]\n", global_ack);
+
+	char errbuf2[LIBNET_ERRBUF_SIZE]; 
+	libnet_t *l = libnet_init(LIBNET_RAW4, dev_name, errbuf2);
+	if (l == NULL) {
+		printf("libnet_init(): %s\n", errbuf2);
+		exit(1);
+	}
+
+	libnet_ptag_t tcp_tag = LIBNET_PTAG_INITIALIZER;
+	libnet_ptag_t ipv4_tag = LIBNET_PTAG_INITIALIZER;
+
+	struct tcp_hdr *tcp_header = headers->tcp_header;
+	struct ip_hdr *ip_header = headers->ip_header;
+
+	char payload[] = {'b', 'o', 'o', 'm', '\r', '\n'};
+
+	tcp_tag = libnet_build_tcp(ntohs(tcp_header->tcp_src_port), //source port
+			              ntohs(tcp_header->tcp_dst_port), //destination port
+			              global_seq, //sequence number
+			              global_ack, //acknowledgement number
+			              TCP_PUSH | TCP_ACK, //flags
+			              1024, //window size
+			              0, //checksum
+			              0, //urgent pointer
+			              20, //TCP packet length
+			              payload, //payload pointer
+			              6, //payload length
+			              l,
+			              tcp_tag);
+
+	if (*tcp_tag == -1) {
+		printf("Can't build TCP header: %s\n", libnet_geterror(l));
+		exit(1);
+	}
+
+	ipv4_tag = libnet_build_ipv4(46, //IP packet length
+								 0, //type of service
+								 0, //id
+								 0, //fragmentation bits 
+								 64, //time to live
+								 IPPROTO_TCP, //protocol
+								 0, //checksum
+								 *(uint32_t *)&(ip_header->ip_src_addr), //source IP address
+								 *(uint32_t *)&(ip_header->ip_dst_addr), //destination IP address
+								 NULL, //payload poitner
+								 0, //payload length
+								 l,
+								 ipv4_tag);
+
+	if (*ipv4_tag == -1) {
+		printf("Can't build IPv4 header: %s\n", libnet_geterror(l));
+		exit(1);
+	}
+
+    if (libnet_write(l) == -1) {
+    	printf("Error writing packet: %s\n", libnet_geterror(l));
+    	exit(1);
+    }
+
+	printf("Packet sent!\n");
+
 	exit(0);
 }
 
