@@ -128,13 +128,12 @@ int main(int argc, char **argv) {
 	libnet_ptag_t ipv4_tag = LIBNET_PTAG_INITIALIZER;
 
 	int res;
-    while((res = pcap_next_ex(phandle, &header, &pkt_data)) >= 0){
-
-    	printf("Packet captured!\n");
-        
+    while((res = pcap_next_ex(phandle, &header, &pkt_data)) >= 0){ 
         // 0 means that libpcap's read timeout expired
         if(res == 0)
             continue;
+
+        printf("Packet captured!\n");
 
         printf("Packet cap length:%d\n", header->caplen);
         printf("Packet length:%d\n", header->len);
