@@ -20,6 +20,38 @@ void print_hex_memory(const void *mem, int len) {
   printf("\n");
 }
 
+char *get_flag_string(u_char tcp_flags) {
+	char *str = "";
+	if ((tcp_flags & TCP_FIN) != 0) {
+		strcat(str, "FIN ");
+	}
+	if ((tcp_flags & TCP_SYN) != 0) {
+		strcat(str, "SYN ");
+	}
+	if ((tcp_flags & TCP_RST) != 0) {
+		strcat(str, "RST ");
+	}
+	if ((tcp_flags & TCP_PUSH) != 0) {
+		strcat(str, "PUSH ");
+	}
+	if ((tcp_flags & TCP_ACK) != 0) {
+		strcat(str, "ACK ");
+	}
+	if ((tcp_flags & TCP_URG) != 0) {
+		strcat(str, "URG ");
+	} 
+	if ((tcp_flags & TCP_ECE) != 0) {
+		strcat(str, "ECE ");
+	}
+	if ((tcp_flags & TCP_CWR) != 0) {
+		strcat(str, "CWR ");
+	}
+	int str_len = strlen(str);
+	if (str_len != 0) {
+		str[str_len - 1] = '\0';
+	}
+	return str;
+}
 
 void log_headers(struct hdrs *headers) {
 	struct ethernet_hdr *ethernet_header = headers->ethernet_header;
@@ -36,19 +68,21 @@ void log_headers(struct hdrs *headers) {
 	if (ip_header->ip_protocol == IP_ICMP) {
 		struct icmp_hdr *icmp_header = headers->icmp_header;
 		if (icmp_header->type == ICMP_ECHOREPLY) {
-			printf("ICMP: type[ICMP_ECHOREPLAY] id[%u] seq[%u]", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.seq));
+			printf("ICMP: type[ICMP_ECHOREPLAY] id[%u] seq[%u]\n", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.seq));
 		} else if (icmp_header->type == ICMP_ECHO) {
-			printf("ICMP: type[ICMP_ECHO] id[%u] seq[%u]", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.seq));
+			printf("ICMP: type[ICMP_ECHO] id[%u] seq[%u]\n", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.seq));
 		}
 	} else if (ip_header->ip_protocol == IP_TCP) {
 		struct tcp_hdr *tcp_header = headers->tcp_header;
 		printf("TCP: src_port[%u] dst_port[%u]\n", ntohs(tcp_header->tcp_src_port), ntohs(tcp_header->tcp_dst_port));
 		printf("     seq_num[%u] ack_num[%u]\n", ntohl(tcp_header->tcp_seq), ntohl(tcp_header->tcp_ack));
-		printf("     tcp_hdr_len[%u] tcp_data_len[%u]\n", (tcp_header->tcp_off) * 4, 
-			                                              ntohs(ip_header->ip_len) - (ip_header->ip_hlen + tcp_header->tcp_off) * 4);
+		char *flag_string = get_flag_string(ip_header->tcp_flags);
+		printf("     tcp_hdr_len[%u] tcp_data_len[%u] flags: %s\n", (tcp_header->tcp_off) * 4, 
+			                                              ntohs(ip_header->ip_len) - (ip_header->ip_hlen + tcp_header->tcp_off) * 4,
+			                                              flag_string);
+		free(flag_string);
 	}
+	printf("---------------------------------------------\n");
 }
-
-
 
 #endif
