@@ -21,9 +21,7 @@ char *get_ip_address(char *interface) {
 	int fd;
 	struct ifreq ifr;
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
-	 /* I want to get an IPv4 IP address */
 	ifr.ifr_addr.sa_family = AF_INET;
-	 /* I want IP address attached to "eth0" */
 	strncpy(ifr.ifr_name, interface, IFNAMSIZ-1);
 
 	if (ioctl(fd, SIOCGIFADDR, &ifr) == -1) {
@@ -40,8 +38,6 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 	struct tcp_hdr *tcp_header = headers->tcp_header;
 	struct ip_hdr *ip_header = headers->ip_header;	
 
-	char payload[1] = "a";
-
 	*tcp_tag = libnet_build_tcp(ntohs(tcp_header->tcp_dst_port),
 				              ntohs(tcp_header->tcp_src_port),
 				              ntohl(tcp_header->tcp_ack) + 1,
@@ -51,8 +47,8 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 				              0,
 				              0,
 				              20,
-				              payload,
-				              1,
+				              NULL,
+				              0,
 				              l,
 				              *tcp_tag);
 	if (*tcp_tag == -1) {
@@ -125,10 +121,10 @@ int main(int argc, char **argv) {
 	char *ip_address = (char *)malloc(strlen(temp) + 1);
 	strcpy(ip_address, temp);
 	printf("IP: [%s].\n", ip_address);
-	/*char filter_expr[200];
+	char filter_expr[200];
 	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
-	strcat(filter_expr, ip_address);*/
-	char *filter_expr = "not port 22";
+	strcat(filter_expr, ip_address);
+	//char *filter_expr = "not port 22";
 	printf("Filter expression: %s\n", filter_expr);
 	apply_filter(phandle, filter_expr);
 
@@ -153,8 +149,8 @@ int main(int argc, char **argv) {
 
         printf("Packet captured!\n");
 
-        printf("Packet cap length:%d\n", header->caplen);
-        printf("Packet length:%d\n", header->len);
+        //printf("Packet cap length:%d\n", header->caplen);
+        //printf("Packet length:%d\n", header->len);
 
         //printf("Dump packet...");
         //print_char_array(pkt_data, header->len);
@@ -162,11 +158,11 @@ int main(int argc, char **argv) {
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
 
-        char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
-        char *source_ip_address = (char *)malloc(strlen(temp2) + 1);
-		strcpy(source_ip_address, temp2);
-		printf("IP: [%s].\n", source_ip_address);
-        if (strcmp(source_ip_address, ip_address) != 0)
+        //char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
+        //char *source_ip_address = (char *)malloc(strlen(temp2) + 1);
+		//strcpy(source_ip_address, temp2);
+		//printf("IP: [%s].\n", source_ip_address);
+        //if (strcmp(source_ip_address, ip_address) != 0)
 			send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
 
         printf("---------------------------------------------\n");
