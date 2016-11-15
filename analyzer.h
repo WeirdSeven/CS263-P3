@@ -29,7 +29,7 @@ struct hdrs *analyze_packet(const u_char *packet) {
 			printf("Invalid TCP header length: %d bytes.\n", tcp_header_length);
 			exit(1);
 		}
-		ret->payload = (char *)(packet + ETHER_HDR_LEN + ip_header_length + tcp_header_length);
+		ret->payload = (u_char *)(packet + ETHER_HDR_LEN + ip_header_length + tcp_header_length);
 		strcpy(ret->protocol, "IP_TCP");
 	} else if (protocol == IP_UDP) {
 		ret->icmp_header = NULL;
