@@ -106,6 +106,17 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
+	struct sigaction action;
+	action.sa_handler = SIGINT_handler;
+	if (sigaction(SIGINT, &action, NULL) < 0) {
+		perror("SIGINT sigaction");
+		exit(1);
+	}
+	if (sigaction(SIGQUIT, &action, NULL) < 0) {
+		perror("SIGINT sigaction");
+		exit(1);
+	}
+
 	pcap_t *phandle = open_phandle(dev_name, errbuf);
 	if (phandle == NULL) {
 		printf("Error: %s\n", errbuf);
