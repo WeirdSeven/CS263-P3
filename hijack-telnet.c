@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
 	}
 
 	struct sigaction action;
-	action.sa_handler = SIGINT_handler
+	action.sa_handler = SIGINT_handler;
 	if (sigaction(SIGINT, action, NULL) < 0) {
 		perror("SIGINT sigaction");
 		exit(1);
