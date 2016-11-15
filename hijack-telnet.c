@@ -20,7 +20,7 @@
 u_int32_t global_sequence;
 u_int32_t global_acknowledge;
 
-void attack_handler (int signum) {
+/*void attack_handler (int signum) {
   char command[4] = "boom"
 
 for (int i = 0; i < 5; i++ ) {
@@ -37,7 +37,7 @@ for (int i = 0; i < 5; i++ ) {
   global_seq++; global_ack++;
   send (seq, ack)
 
-}
+}*/
 
 
 rec FIN
