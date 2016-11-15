@@ -69,12 +69,21 @@ char *get_flag_string(u_char tcp_flags) {
 
 void log_headers(struct hdrs *headers) {
 	struct ethernet_hdr *ethernet_header = headers->ethernet_header;
-	printf("ETHERNET: src[%s] dst[%s]\n", ether_ntoa((struct ether_addr*)&ethernet_header[6]), 
-										  ether_ntoa((struct ether_addr*)&ethernet_header[0]));
-
+	char *temp = ether_ntoa((struct ether_addr*)&ethernet_header[6]);
+	char *ether_src_addr = (char *)malloc(strlen(temp) + 1);
+	strcpy(ether_src_addr, temp);
+	temp = ether_ntoa((struct ether_addr*)&ethernet_header[0]);
+	char *ether_dst_addr = (char *)malloc(strlen(temp) + 1);
+	strcpy(ether_dst_addr, temp);
+	printf("ETHERNET: src[%s] dst[%s]\n", ether_src_addr, ether_dst_addr);
 	struct ip_hdr *ip_header = headers->ip_header;
-	printf("IP: src[%s] dst[%s]\n", inet_ntoa(ip_header->ip_src_addr),
-		                            inet_ntoa(ip_header->ip_dst_addr));
+	temp = inet_ntoa(ip_header->ip_src_addr);
+	char *ip_src_addr = (char *)malloc(strlen(temp) + 1);
+	strcpy(ip_src_addr, temp);
+	temp = inet_ntoa(ip_header->ip_dst_addr);
+	char *ip_dst_addr = (char *)malloc(strlen(temp) + 1);
+	strcpy(ip_dst_addr, temp);
+	printf("IP: src[%s] dst[%s]\n", ip_src_addr, ip_dst_addr);
 	printf("    ip_hdr_len[%u] ip_data_len[%u] Protocol: %s\n", (ip_header->ip_hlen) * 4, 
 															    ntohs(ip_header->ip_len) - (ip_header->ip_hlen) * 4, 
 															    headers->protocol);

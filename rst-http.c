@@ -58,6 +58,7 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 		exit(1);
 	}
 
+
 	*ipv4_tag = libnet_build_ipv4(40,
 								 0,
 								 0,
@@ -108,7 +109,9 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	char *ip_address = get_ip_address(dev_name);
+	char *temp = get_ip_address(dev_name);
+	char *ip_address = (char *)malloc(strlen(temp) + 1);
+	strcpy(ip_address, temp);
 	printf("IP: [%s].\n", ip_address);
 	char filter_expr[200];
 	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
