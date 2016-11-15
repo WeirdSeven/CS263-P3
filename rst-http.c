@@ -168,6 +168,7 @@ int main(int argc, char **argv) {
         printf("An error occurred while reading the packet.\n");
         exit(1);
     } else if (res == -2) {
+    	printf("In handler\n");
     	free(ip_address);
     	free(headers);
     	libnet_destroy(l);
