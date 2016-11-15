@@ -84,7 +84,7 @@ void log_headers(struct hdrs *headers) {
 		char *flag_string = get_flag_string(flags);
 		printf("     tcp_hdr_len[%u] tcp_data_len[%u] flags: %s\n", (tcp_header->tcp_off) * 4, 
 			                                              ntohs(ip_header->ip_len) - (ip_header->ip_hlen + tcp_header->tcp_off) * 4,
-			                                              "hi");
+			                                              flag_string);
 		//free(flag_string);
 	}
 	printf("---------------------------------------------\n");
