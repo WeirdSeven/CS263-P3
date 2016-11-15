@@ -18,12 +18,13 @@
 #include "logger.h"
 
 pcap_t *global_phandle;
+libnet_t *global_l;
+
 
 void SIGINT_handler(int num) {
-	printf("Before\n");
 	pcap_breakloop(global_phandle);
 	pcap_close(global_phandle);
-	printf("After\n");
+	printf("All resources deallocated.\n");
 }
 
 char *get_ip_address(char *interface) {
@@ -135,6 +136,7 @@ int main(int argc, char **argv) {
 	strcat(filter_expr, ip_address);
 	printf("Filter expression: %s\n", filter_expr);
 	apply_filter(phandle, filter_expr);
+	free(ip_address);
 
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
@@ -150,7 +152,6 @@ int main(int argc, char **argv) {
 	libnet_ptag_t ipv4_tag = LIBNET_PTAG_INITIALIZER;
 
 	int res;
-	struct hdrs *headers;
     while((res = pcap_next_ex(phandle, &header, &pkt_data)) >= 0){ 
     	printf("1\n");
         // 0 means that libpcap's read timeout expired
@@ -160,11 +161,13 @@ int main(int argc, char **argv) {
 
         printf("Packet captured!\n");
 
-        headers = analyze_packet(pkt_data);
+        struct hdrs *headers = analyze_packet(pkt_data);
 
         log_headers(headers);
 
 		send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
+
+		free(headers);
 
         printf("---------------------------------------------\n");
     }
@@ -173,13 +176,6 @@ int main(int argc, char **argv) {
     if (res == -1) {
         printf("An error occurred while reading the packet.\n");
         exit(1);
-    } else if (res == -2) {
-    	printf("In handler\n");
-    	free(ip_address);
-    	free(headers);
-    	libnet_destroy(l);
-        
-        printf("All resources deallocated.\n");
     }
 
 	return 0;
