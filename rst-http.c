@@ -22,6 +22,7 @@ pcap_t *global_phandle;
 void SIGINT_handler(int num) {
 	printf("Before\n");
 	pcap_breakloop(global_phandle);
+	pcap_close(phandle);
 	printf("After\n");
 }
 
@@ -177,7 +178,7 @@ int main(int argc, char **argv) {
     	free(ip_address);
     	free(headers);
     	libnet_destroy(l);
-        pcap_close(phandle);
+        
         printf("All resources deallocated.\n");
     }
 
