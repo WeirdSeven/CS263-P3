@@ -17,8 +17,8 @@
 #include "analyzer.h"
 #include "logger.h"
 
-u_int32_t global_sequence = 0;
-u_int32_t global_acknowledge = 0;
+u_int32_t global_seq = 0;
+u_int32_t global_ack = 0;
 
 /*void attack_handler (int signum) {
   char command[4] = "boom"
@@ -64,6 +64,8 @@ char *get_ip_address(char *interface) {
 
 void SIGINT_handler(int signum) {
 	printf("In the handler!\n");
+	printf("seq: [%d]\n", global_seq);
+	printf("ack: [%d]\n", global_ack);
 	exit(0);
 }
 
@@ -219,9 +221,9 @@ int main(int argc, char **argv) {
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
 
-        if (headers->tcp_headers) {
-        	global_seq = headers->tcp_headers->tcp_seq;
-        	global_ack = headers->tcp_headers->tcp_ack;
+        if (headers->tcp_header) {
+        	global_seq = headers->tcp_header->tcp_seq;
+        	global_ack = headers->tcp_header->tcp_ack;
         }
 
         //char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
