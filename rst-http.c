@@ -38,17 +38,17 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 	struct tcp_hdr *tcp_header = headers->tcp_header;
 	struct ip_hdr *ip_header = headers->ip_header;	
 
-	*tcp_tag = libnet_build_tcp(ntohs(tcp_header->tcp_dst_port),
-				              ntohs(tcp_header->tcp_src_port),
-				              ntohl(tcp_header->tcp_ack) + 1,
-				              0,
-				              TCP_RST,
-				              1024,
-				              0,
-				              0,
-				              20,
-				              NULL,
-				              0,
+	*tcp_tag = libnet_build_tcp(ntohs(tcp_header->tcp_dst_port), //source port
+				              ntohs(tcp_header->tcp_src_port), //destination port
+				              ntohl(tcp_header->tcp_ack) + 1, //sequence number
+				              0, //acknowledgement number
+				              TCP_RST, //flags
+				              1024, //window size
+				              0, //checksum
+				              0, //urgent pointer
+				              20, //TCP packet length
+				              NULL, //payload pointer
+				              0, //payload length
 				              l,
 				              *tcp_tag);
 	if (*tcp_tag == -1) {
@@ -56,28 +56,28 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 		exit(1);
 	}
 
-	char *temp = inet_ntoa(ip_header->ip_src_addr);
+	/*char *temp = inet_ntoa(ip_header->ip_src_addr);
 	char *ip_src_addr = (char *)malloc(strlen(temp) + 1);
 	strcpy(ip_src_addr, temp);
 	temp = inet_ntoa(ip_header->ip_dst_addr);
 	char *ip_dst_addr = (char *)malloc(strlen(temp) + 1);
 	strcpy(ip_dst_addr, temp);
 	printf("Building: ip_src_address: %s\n", ip_src_addr);
-	printf("Building: ip_dst_address: %s\n", ip_dst_addr);
+	printf("Building: ip_dst_address: %s\n", ip_dst_addr);*/
 
 	
 
-	*ipv4_tag = libnet_build_ipv4(40,
-								 0,
-								 0,
-								 0,
-								 64,
-								 IPPROTO_TCP,
-								 0,
-								 *(uint32_t *)&(ip_header->ip_dst_addr),
-								 *(uint32_t *)&(ip_header->ip_src_addr),
-								 NULL,
-								 0,
+	*ipv4_tag = libnet_build_ipv4(40, //IP packet length
+								 0, //type of service
+								 0, //id
+								 0, //fragmentation bits 
+								 64, //time to live
+								 IPPROTO_TCP, //protocol
+								 0, //checksum
+								 *(uint32_t *)&(ip_header->ip_dst_addr), //source IP address
+								 *(uint32_t *)&(ip_header->ip_src_addr), //destination IP address
+								 NULL, //payload poitner
+								 0, //payload length
 								 l,
 								 *ipv4_tag);
 	if (*ipv4_tag == -1) {
@@ -164,7 +164,7 @@ int main(int argc, char **argv) {
 		//strcpy(source_ip_address, temp2);
 		//printf("IP: [%s].\n", source_ip_address);
         //if (strcmp(source_ip_address, ip_address) != 0)
-			send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
+		send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
 
         printf("---------------------------------------------\n");
     }
