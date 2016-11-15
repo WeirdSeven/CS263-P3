@@ -37,6 +37,52 @@ char *get_ip_address(char *interface) {
 	return inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
 }
 
+int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, libnet_ptag_t *ipv4_tag) {
+	struct tcp_hdr *tcp_header = headers->tcp_header;
+	struct ip_hdr *ip_header = headers->ip_header;	
+
+	*tcp_tag = libnet_build_tcp(ntohs(tcp_header->tcp_dst_port),
+				              ntohs(tcp_header->tcp_src_port),
+				              ntohl(tcp_header->tcp_ack) + 1,
+				              0,
+				              TCP_RST,
+				              1024,
+				              0,
+				              0,
+				              20,
+				              NULL,
+				              0,
+				              l,
+				              *tcp_tag);
+	if (*tcp_tag == -1) {
+		printf("Can't build TCP header: %s\n", libnet_geterror(l));
+		exit(1);
+	}
+
+	*ipv4_tag = libnet_build_ipv4(40,
+								 0,
+								 0,
+								 0,
+								 IPPROTO_TCP,
+								 64,
+								 0,
+								 *(uint32_t *)&(ip_header->ip_dst_addr),
+								 *(uint32_t *)&(ip_header->ip_src_addr),
+								 NULL,
+								 0,
+								 l,
+								 *ipv4_tag);
+	if (*ipv4_tag == -1) {
+		printf("Can't build IPv4 header: %s\n", libnet_geterror(l));
+		exit(1);
+	}
+
+    if (libnet_write(l) != -1) {
+    	printf("Error writing packet: %s\n", libnet_geterror(l));
+    	exit(1);
+    }
+}	
+
 
 int main(int argc, char **argv) {
 	char errbuf[PCAP_ERRBUF_SIZE];
@@ -65,9 +111,50 @@ int main(int argc, char **argv) {
 	printf("IP: [%s].\n", ip_address);
 	char filter_expr[200];
 	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
-	//char *filter_expr = "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ";
 	strcat(filter_expr, ip_address);
+	printf("Filter expression: %s\n", filter_expr);
 	apply_filter(phandle, filter_expr);
+
+	struct pcap_pkthdr *header;
+	const u_char *pkt_data;
+	
+	char errbuf[LIBNET_ERRBUF_SIZE]; 
+	libnet_t *l = libnet_init(LIBNET_RAW4, dev_name, errbuf);
+	if (l == NULL) {
+		printf("libnet_init(): %s\n", errbuf);
+		exit(1);
+	}
+
+	libnet_ptag_t tcp_tag = LIBNET_PTAG_INITIALIZER;
+	libnet_ptag_t ipv4_tag = LIBNET_PTAG_INITIALIZER;
+
+	int res;
+    while((res = pcap_next_ex(phandle, &header, &pkt_data)) >= 0){
+        
+        // 0 means that libpcap's read timeout expired
+        if(res == 0)
+            continue;
+
+        //printf("Packet cap length:%d\n", header->caplen);
+        //printf("Packet length:%d\n", header->len);
+
+        //printf("Dump packet...");
+        //print_char_array(pkt_data, header->len);
+
+        struct hdrs *headers = analyze_packet(pkt_data);
+        send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
+
+        
+        //log_headers(headers);
+    }
+
+    if (res == -1) {
+        printf("An error occurred while reading the packet.\n");
+        exit(1);
+    } else if (res == -2) {
+    	libnet_destroy(l);
+        // TODO
+    }
 
 
 
