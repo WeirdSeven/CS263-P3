@@ -23,9 +23,9 @@ void print_hex_memory(const void *mem, unsigned int len) {
 void print_char_array(const u_char *mem, unsigned int len) {
   int i;
   for (i = 0; i < len; i++) {
-    printf("%c", mem[i]);
-    if (i % 16 == 0)
+  	if (i % 16 == 0 && i != 0)
       printf("\n");
+    printf("%c", mem[i]);  
   }
   printf("\n");
 }
