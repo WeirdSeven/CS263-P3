@@ -20,7 +20,9 @@
 pcap_t *global_phandle;
 
 void SIGINT_handler(int num) {
+	printf("Before\n");
 	pcap_breakloop(global_phandle);
+	printf("After\n");
 }
 
 char *get_ip_address(char *interface) {
