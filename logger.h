@@ -29,12 +29,12 @@ void log_headers(struct hdrs *headers) {
 	struct ip_hdr *ip_header = headers->ip_header;
 	printf("IP: src[%s] dst[%s]\n", inet_ntoa(ip_header->ip_src_addr),
 		                          inet_ntoa(ip_header->ip_dst_addr));
-	/*printf("    ip_hdr_len[%u] ip_data_len[%u] Protocol: %s\n", (ip_header->ip_hlen) * 4, 
+	printf("    ip_hdr_len[%u] ip_data_len[%u] Protocol: %s\n", (ip_header->ip_hlen) * 4, 
 															    ntohs(ip_header->ip_len) - (ip_header->ip_hlen) * 4, 
-															    headers->protocol);*/
+															    headers->protocol);
 
-	swtich (ip_header->ip_protocol) {
-		/*case IP_ICMP:
+	/*swtich (ip_header->ip_protocol) {
+		case IP_ICMP:
 			break;
 		case IP_TCP: {
 			struct tcp_hdr *tcp_header = headers->tcp_header;
@@ -45,8 +45,21 @@ void log_headers(struct hdrs *headers) {
 			break;
 		}
 		default: 
-			break;*/
+			break;
+	}*/
+
+	if (ip_header->ip_protocol == IP_ICMP) {
+
+	} else if (ip_header->ip_protocol == IP_TCP) {
+		struct tcp_hdr *tcp_header = headers->tcp_header;
+		printf("TCP: src_port[%u] dst_port[%u]\n", ntohs(tcp_header->src_port), ntohs(tcp_header->dst_port));
+		printf("     seq_num[%u] ack_num[%u]\n", ntohl(tcp_header->tcp_seq), ntohl(tcp_header->tcp_ack));
+		printf("     tcp_hdr_len[%u] tcp_data_len[%u]\n", (tcp_header->tcp_off) * 4, 
+			                                              ntohs(ip_header->ip_len) - (ip_hdear->ip_hlen + tcp_header->tcp_off) * 4);
+	} else {
+
 	}
+
 	//printf("ETHERNET: src[0c:df:27:16:b8:30] dst[50:5a:00:12:35:02]");
 }
 
