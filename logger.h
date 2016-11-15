@@ -103,6 +103,7 @@ void log_headers(struct hdrs *headers) {
 		unsigned int payload_length = ntohs(ip_header->ip_len) - (ip_header->ip_hlen + tcp_header->tcp_off) * 4;
 		printf("     tcp_hdr_len[%u] tcp_data_len[%u] flags: %s\n", (tcp_header->tcp_off) * 4, payload_length, flag_string);
 		print_char_array(headers->payload, payload_length);
+		print_hex_memory(headers->payload, payload_length);
 		free(flag_string);
 	}
 	
