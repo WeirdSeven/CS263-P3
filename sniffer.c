@@ -46,7 +46,8 @@ int main(int argc, char **argv) {
         // 0 means that libpcap's read timeout expired
         if(res == 0)
             continue;
-        
+
+        printf("Packet cap length:%d\n", header->caplen);
         printf("Packet length:%d\n", header->len);
 
         printf("Dump packet...");
