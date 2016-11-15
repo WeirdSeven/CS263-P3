@@ -154,11 +154,11 @@ int main(int argc, char **argv) {
 
 	struct sigaction action;
 	action.sa_handler = SIGINT_handler;
-	if (sigaction(SIGINT, action, NULL) < 0) {
+	if (sigaction(SIGINT, &action, NULL) < 0) {
 		perror("SIGINT sigaction");
 		exit(1);
 	}
-	if (sigaction(SIGQUIT, action, NULL) < 0) {
+	if (sigaction(SIGQUIT, &action, NULL) < 0) {
 		perror("SIGINT sigaction");
 		exit(1);
 	}
