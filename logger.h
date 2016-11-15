@@ -76,7 +76,7 @@ void log_headers(struct hdrs *headers) {
 		struct tcp_hdr *tcp_header = headers->tcp_header;
 		printf("TCP: src_port[%u] dst_port[%u]\n", ntohs(tcp_header->tcp_src_port), ntohs(tcp_header->tcp_dst_port));
 		printf("     seq_num[%u] ack_num[%u]\n", ntohl(tcp_header->tcp_seq), ntohl(tcp_header->tcp_ack));
-		char *flag_string = get_flag_string(ip_header->tcp_flags);
+		char *flag_string = get_flag_string(tcp_header->tcp_flags);
 		printf("     tcp_hdr_len[%u] tcp_data_len[%u] flags: %s\n", (tcp_header->tcp_off) * 4, 
 			                                              ntohs(ip_header->ip_len) - (ip_header->ip_hlen + tcp_header->tcp_off) * 4,
 			                                              flag_string);
