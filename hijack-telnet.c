@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
 	} else if (argc == 4) {
 		server_name = argv[1];
 		server_port = argv[2];
-		dev_name = argv[1];
+		dev_name = argv[3];
 		if (!device_exists(dev_name)) {
 			printf("Device does not exist.\n");
 			exit(1);

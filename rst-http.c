@@ -41,7 +41,7 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 	*tcp_tag = libnet_build_tcp(ntohs(tcp_header->tcp_dst_port), //source port
 				              ntohs(tcp_header->tcp_src_port), //destination port
 				              ntohl(tcp_header->tcp_ack) + 1, //sequence number
-				              0, //acknowledgement number
+				              ntohl(tcp_header->tcp_seq), //acknowledgement number
 				              TCP_RST, //flags
 				              1024, //window size
 				              0, //checksum
@@ -124,7 +124,6 @@ int main(int argc, char **argv) {
 	char filter_expr[200];
 	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
 	strcat(filter_expr, ip_address);
-	//char *filter_expr = "not port 22";
 	printf("Filter expression: %s\n", filter_expr);
 	apply_filter(phandle, filter_expr);
 
