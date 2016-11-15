@@ -64,8 +64,8 @@ char *get_ip_address(char *interface) {
 
 void SIGINT_handler(int signum) {
 	printf("In the handler!\n");
-	printf("seq: [%d]\n", global_seq);
-	printf("ack: [%d]\n", global_ack);
+	printf("seq: [%u]\n", global_seq);
+	printf("ack: [%u]\n", global_ack);
 	exit(0);
 }
 
@@ -225,6 +225,9 @@ int main(int argc, char **argv) {
         	global_seq = ntohl(headers->tcp_header->tcp_seq);
         	global_ack = ntohl(headers->tcp_header->tcp_ack);
         }
+
+        //printf("global_seq: [%d]\n", global_seq);
+		//printf("global_ack: [%d]\n", global_ack);
 
         //char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
         //char *source_ip_address = (char *)malloc(strlen(temp2) + 1);
