@@ -105,7 +105,7 @@ void log_headers(struct hdrs *headers) {
 		//print_char_array(headers->payload, payload_length);
 		free(flag_string);
 	}
-	printf("---------------------------------------------\n");
+	
 }
 
 #endif
