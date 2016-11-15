@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	apply_filter(phandle, "dst port 22");
+	apply_filter(phandle, "not dst port 22");
 
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
