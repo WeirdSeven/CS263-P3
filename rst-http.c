@@ -58,6 +58,16 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 		exit(1);
 	}
 
+	char *temp = inet_ntoa(ip_header->ip_src_addr);
+	char *ip_src_addr = (char *)malloc(strlen(temp) + 1);
+	strcpy(ip_src_addr, temp);
+	temp = inet_ntoa(ip_header->ip_dst_addr);
+	char *ip_dst_addr = (char *)malloc(strlen(temp) + 1);
+	strcpy(ip_dst_addr, temp);
+	printf("Building: ip_src_address: %s\n", ip_src_addr);
+	printf("Building: ip_dst_address: %s\n", ip_dst_addr);
+
+
 
 	*ipv4_tag = libnet_build_ipv4(40,
 								 0,
@@ -109,11 +119,11 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	/*char *temp = get_ip_address(dev_name);
+	char *temp = get_ip_address(dev_name);
 	char *ip_address = (char *)malloc(strlen(temp) + 1);
 	strcpy(ip_address, temp);
 	printf("IP: [%s].\n", ip_address);
-	char filter_expr[200];
+	/*char filter_expr[200];
 	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
 	strcat(filter_expr, ip_address);*/
 	char *filter_expr = "not port 22";
@@ -149,7 +159,11 @@ int main(int argc, char **argv) {
 
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
-        send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
+
+        if (strcmp(headers->ip_header->ip_src_addr, ip_address) != 0)
+			send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
+		
+        printf("---------------------------------------------\n");
     }
 
     if (res == -1) {
