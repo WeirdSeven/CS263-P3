@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	apply_filter(phandle, "not dst port 22");
+	apply_filter(phandle, "not port 22");
 
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
@@ -47,11 +47,11 @@ int main(int argc, char **argv) {
         if(res == 0)
             continue;
 
-        printf("Packet cap length:%d\n", header->caplen);
-        printf("Packet length:%d\n", header->len);
+        //printf("Packet cap length:%d\n", header->caplen);
+        //printf("Packet length:%d\n", header->len);
 
-        printf("Dump packet...");
-        print_hex_memory((const void *)pkt_data, header->len);
+        //printf("Dump packet...");
+        //print_hex_memory((const void *)pkt_data, header->len);
 
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
