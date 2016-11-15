@@ -160,9 +160,13 @@ int main(int argc, char **argv) {
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
 
-        if (strcmp(headers->ip_header->ip_src_addr, ip_address) != 0)
+        char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
+        char *source_ip_address = (char *)malloc(strlen(temp2) + 1);
+		strcpy(source_ip_address, temp2);
+		printf("IP: [%s].\n", source_ip_address);
+        if (strcmp(source_ip_address, ip_address) != 0)
 			send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
-		
+
         printf("---------------------------------------------\n");
     }
 
