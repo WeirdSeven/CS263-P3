@@ -28,7 +28,7 @@ char *get_ip_address(char *interface) {
 	strncpy(ifr.ifr_name, interface, IFNAMSIZ-1);
 
 	if (ioctl(fd, SIOCGIFADDR, &ifr) == -1) {
-		perrno();
+		perror("Getting IP address: ");
 		exit(1);
 	}
 
