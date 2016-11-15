@@ -29,9 +29,9 @@ void log_headers(struct hdrs *headers) {
 	struct ip_hdr *ip_header = headers->ip_header;
 	printf("IP: src[%s] dst[%s]\n", inet_ntoa(ip_header->ip_src_addr),
 		                          inet_ntoa(ip_header->ip_dst_addr));
-	printf("    ip_hdr_len[%u] ip_data_len[%u] Protocol: %s\n", (ip_header->ip_hlen) * 4, 
+	/*printf("    ip_hdr_len[%u] ip_data_len[%u] Protocol: %s\n", (ip_header->ip_hlen) * 4, 
 															    ntohs(ip_header->ip_len) - (ip_header->ip_hlen) * 4, 
-															    headers->protocol);
+															    headers->protocol);*/
 
 	swtich (ip_header->ip_protocol) {
 		case IP_ICMP:
