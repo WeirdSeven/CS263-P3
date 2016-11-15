@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
 	printf("Filter expression: %s\n", filter_expr);
 	apply_filter(phandle, filter_expr);
 
-	/*struct pcap_pkthdr *header;
+	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
 	
 	char errbuf2[LIBNET_ERRBUF_SIZE]; 
@@ -209,7 +209,7 @@ int main(int argc, char **argv) {
 		//strcpy(source_ip_address, temp2);
 		//printf("IP: [%s].\n", source_ip_address);
         //if (strcmp(source_ip_address, ip_address) != 0)
-		send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
+		//send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
 
         printf("---------------------------------------------\n");
     }
@@ -220,7 +220,7 @@ int main(int argc, char **argv) {
     } else if (res == -2) {
     	libnet_destroy(l);
         // TODO
-    }*/
+    }
 
 
 
