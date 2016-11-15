@@ -129,6 +129,8 @@ int main(int argc, char **argv) {
 
 	int res;
     while((res = pcap_next_ex(phandle, &header, &pkt_data)) >= 0){
+
+    	printf("Packet captured!\n");
         
         // 0 means that libpcap's read timeout expired
         if(res == 0)
