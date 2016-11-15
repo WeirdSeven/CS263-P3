@@ -118,10 +118,10 @@ int main(int argc, char **argv) {
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
 	
-	char errbuf[LIBNET_ERRBUF_SIZE]; 
-	libnet_t *l = libnet_init(LIBNET_RAW4, dev_name, errbuf);
+	char errbuf2[LIBNET_ERRBUF_SIZE]; 
+	libnet_t *l = libnet_init(LIBNET_RAW4, dev_name, errbuf2);
 	if (l == NULL) {
-		printf("libnet_init(): %s\n", errbuf);
+		printf("libnet_init(): %s\n", errbuf2);
 		exit(1);
 	}
 
