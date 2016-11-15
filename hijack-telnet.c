@@ -73,7 +73,7 @@ void SIGINT_handler(int signum) {
 	char errbuf[LIBNET_ERRBUF_SIZE]; 
 	libnet_t *l = libnet_init(LIBNET_RAW4, global_dev_name, errbuf);
 	if (l == NULL) {
-		printf("libnet_init(): %s\n", errbuf2);
+		printf("libnet_init(): %s\n", errbuf);
 		exit(1);
 	}
 
