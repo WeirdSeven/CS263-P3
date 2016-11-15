@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
 
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
-        //send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
+        send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
     }
 
     if (res == -1) {
