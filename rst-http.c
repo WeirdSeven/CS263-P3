@@ -23,7 +23,7 @@ libnet_t *global_l;
 
 void SIGINT_handler(int num) {
 	pcap_close(global_phandle);
-	libnet_destroy(l);
+	libnet_destroy(global_l);
 	printf("All resources deallocated.\n");
 	exit(0);
 }
