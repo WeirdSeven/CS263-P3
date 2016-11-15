@@ -144,10 +144,8 @@ int main(int argc, char **argv) {
         //print_char_array(pkt_data, header->len);
 
         struct hdrs *headers = analyze_packet(pkt_data);
+        log_headers(headers);
         send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
-
-        
-        //log_headers(headers);
     }
 
     if (res == -1) {
