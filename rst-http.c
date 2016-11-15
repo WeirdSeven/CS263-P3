@@ -63,7 +63,9 @@ int main(int argc, char **argv) {
 
 	char *ip_address = get_ip_address(dev_name);
 	printf("IP: [%s].\n", ip_address);
-	char *filter_expr = "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ";
+	char filter_expr[200];
+	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
+	//char *filter_expr = "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ";
 	strcat(filter_expr, ip_address);
 	apply_filter(phandle, filter_expr);
 
