@@ -96,7 +96,7 @@ void SIGINT_handler(int signum) {
 			              l,
 			              tcp_tag);
 
-	if (*tcp_tag == -1) {
+	if (tcp_tag == -1) {
 		printf("Can't build TCP header: %s\n", libnet_geterror(l));
 		exit(1);
 	}
@@ -115,7 +115,7 @@ void SIGINT_handler(int signum) {
 								 l,
 								 ipv4_tag);
 
-	if (*ipv4_tag == -1) {
+	if (ipv4_tag == -1) {
 		printf("Can't build IPv4 header: %s\n", libnet_geterror(l));
 		exit(1);
 	}
