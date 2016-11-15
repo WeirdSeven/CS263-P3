@@ -151,9 +151,11 @@ int main(int argc, char **argv) {
 	int res;
 	struct hdrs *headers;
     while((res = pcap_next_ex(phandle, &header, &pkt_data)) >= 0){ 
+    	printf("1\n");
         // 0 means that libpcap's read timeout expired
         if(res == 0)
             continue;
+        printf("2\n");
 
         printf("Packet captured!\n");
 
@@ -165,6 +167,7 @@ int main(int argc, char **argv) {
 
         printf("---------------------------------------------\n");
     }
+    printf("3\n");
 
     if (res == -1) {
         printf("An error occurred while reading the packet.\n");
