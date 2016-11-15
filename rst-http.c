@@ -13,7 +13,6 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 
-
 #include "sniffer.h"
 #include "analyzer.h"
 #include "logger.h"
@@ -77,7 +76,7 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 		exit(1);
 	}
 
-    if (libnet_write(l) != -1) {
+    if (libnet_write(l) == -1) {
     	printf("Error writing packet: %s\n", libnet_geterror(l));
     	exit(1);
     }
