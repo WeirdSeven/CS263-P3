@@ -80,6 +80,8 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
     	printf("Error writing packet: %s\n", libnet_geterror(l));
     	exit(1);
     }
+
+    printf("Packet sent!\n");
 }	
 
 
@@ -138,8 +140,8 @@ int main(int argc, char **argv) {
         printf("Packet cap length:%d\n", header->caplen);
         printf("Packet length:%d\n", header->len);
 
-        printf("Dump packet...");
-        print_char_array(pkt_data, header->len);
+        //printf("Dump packet...");
+        //print_char_array(pkt_data, header->len);
 
         struct hdrs *headers = analyze_packet(pkt_data);
         send_rst_packet(headers, l, &tcp_tag, &ipv4_tag);
