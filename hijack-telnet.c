@@ -37,13 +37,13 @@ for (int i = 0; i < 5; i++ ) {
   global_seq++; global_ack++;
   send (seq, ack)
 
-}*/
+}
 
 
 rec FIN
 send FIN ACK
 
-}
+}*/
 
 char *get_ip_address(char *interface) {
 	int fd;
