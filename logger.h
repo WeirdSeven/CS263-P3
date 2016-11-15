@@ -34,18 +34,19 @@ void log_headers(struct hdrs *headers) {
 															    headers->protocol);
 
 	if (ip_header->ip_protocol == IP_ICMP) {
-
+		struct icmp_hdr *icmp_header = headers->icmp_header;
+		if (icmp_header->type == ICMP_ECHOREPLY) {
+			printf("ICMP: type[ICMP_ECHOREPLAY] id[%u] seq[%u]", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.seq));
+		} else if (icmp_header->type == ICMP_ECHO) {
+			printf("ICMP: type[ICMP_ECHO] id[%u] seq[%u]", ntohs(icmp_header->un.echo.id), ntohs(icmp_header->un.echo.seq));
+		}
 	} else if (ip_header->ip_protocol == IP_TCP) {
 		struct tcp_hdr *tcp_header = headers->tcp_header;
 		printf("TCP: src_port[%u] dst_port[%u]\n", ntohs(tcp_header->tcp_src_port), ntohs(tcp_header->tcp_dst_port));
 		printf("     seq_num[%u] ack_num[%u]\n", ntohl(tcp_header->tcp_seq), ntohl(tcp_header->tcp_ack));
 		printf("     tcp_hdr_len[%u] tcp_data_len[%u]\n", (tcp_header->tcp_off) * 4, 
 			                                              ntohs(ip_header->ip_len) - (ip_header->ip_hlen + tcp_header->tcp_off) * 4);
-	} else {
-
 	}
-
-	//printf("ETHERNET: src[0c:df:27:16:b8:30] dst[50:5a:00:12:35:02]");
 }
 
 
