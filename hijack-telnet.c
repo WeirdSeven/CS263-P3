@@ -22,7 +22,7 @@ u_int32_t global_ack = 0;
 struct hdrs *global_headers = NULL;
 char global_dev_name[100];
 
-pcap_t *phandle = NULL;
+pcap_t *global_phandle = NULL;
 
 
 void SIGINT_handler(int signum) {
