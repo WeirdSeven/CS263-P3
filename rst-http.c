@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
 	strcpy(ip_address, temp);
 	printf("IP: [%s].\n", ip_address);
 	char filter_expr[200];
-	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
+	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] == tcp-ack and dst host ");
 	strcat(filter_expr, ip_address);
 	//char *filter_expr = "not port 22";
 	printf("Filter expression: %s\n", filter_expr);
