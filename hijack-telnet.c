@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 	if (sigaction(SIGQUIT, &action, NULL) < 0) {
-		perror("SIGINT sigaction");
+		perror("SIGQUIT sigaction");
 		exit(1);
 	}
 
@@ -182,9 +182,7 @@ int main(int argc, char **argv) {
     if (res == -1) {
         printf("An error occurred while reading the packet.\n");
         exit(1);
-    } else if (res == -2) {
-    	pcap_close(phandle);
-    }
+    } 
 
 	return 0;
 }

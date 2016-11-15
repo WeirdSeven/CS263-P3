@@ -22,8 +22,8 @@ libnet_t *global_l;
 
 
 void SIGINT_handler(int num) {
-	pcap_breakloop(global_phandle);
 	pcap_close(global_phandle);
+	libnet_destroy(l);
 	printf("All resources deallocated.\n");
 	exit(0);
 }
@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 	if (sigaction(SIGQUIT, &action, NULL) < 0) {
-		perror("SIGINT sigaction");
+		perror("SIGQUIT sigaction");
 		exit(1);
 	}
 

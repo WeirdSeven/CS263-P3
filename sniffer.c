@@ -7,6 +7,14 @@
 #include "analyzer.h"
 #include "logger.h"
 
+pcap_t *global_phandle;
+
+void SIGINT_handler(int num) {
+	pcap_close(global_phandle);
+	printf("All resources deallocated.\n");
+	exit(0);
+}
+
 int main(int argc, char **argv) {
 	char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -29,6 +37,18 @@ int main(int argc, char **argv) {
 		printf("Error: %s\n", errbuf);
 		exit(1);
 	}
+	global_phandle = phandle;
+
+	struct sigaction action;
+	action.sa_handler = SIGINT_handler;
+	if (sigaction(SIGINT, &action, NULL) < 0) {
+		perror("SIGINT sigaction");
+		exit(1);
+	}
+	if (sigaction(SIGQUIT, &action, NULL) < 0) {
+		perror("SIGQUIT sigaction");
+		exit(1);
+	}
 
 	if (pcap_datalink(phandle) != DLT_EN10MB) {
 		printf("%s is not an Ethernet.\n", dev_name);
@@ -47,21 +67,14 @@ int main(int argc, char **argv) {
         if(res == 0)
             continue;
 
-        //printf("Packet cap length:%d\n", header->caplen);
-        //printf("Packet length:%d\n", header->len);
-
-        //printf("Dump packet...");
-        //print_char_array(pkt_data, header->len);
-
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
+        free(headers);
     }
 
     if (res == -1) {
         printf("An error occurred while reading the packet.\n");
         exit(1);
-    } else if (res == -2) {
-        // TODO
     }
 
 	return 0;
