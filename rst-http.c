@@ -158,7 +158,9 @@ int main(int argc, char **argv) {
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
 
-        if (headers->tcp_header && (headers->tcp_header->tcp_flags & TCP_RST != 0)) {
+        if (headers->tcp_header) 
+        	printf("flags: %x", headers->tcp_header->tcp_flags);
+        if (headers->tcp_header && ((headers->tcp_header->tcp_flags) & TCP_RST != 0)) {
         	res = -2;
         	break;
         }
