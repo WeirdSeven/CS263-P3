@@ -70,6 +70,8 @@ int main(int argc, char **argv) {
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
         free(headers);
+
+        printf("---------------------------------------------\n");
     }
 
     if (res == -1) {
