@@ -10,8 +10,9 @@
 #include "sniffer.h"
 
 void print_hex_memory(const void *mem, unsigned int len) {
+  int i;
   unsigned char *p = (unsigned char *)mem;
-  for (int i = 0;i < len; i++) {
+  for (i = 0; i < len; i++) {
     printf("0x%02x ", p[i]);
     if (i % 16 == 0)
       printf("\n");
@@ -20,8 +21,9 @@ void print_hex_memory(const void *mem, unsigned int len) {
 }
 
 void print_char_array(const u_char *mem, unsigned int len) {
-  for (int i = 0;i < len; i++) {
-    printf("c", mem[i]);
+  int i;
+  for (i = 0; i < len; i++) {
+    printf("%c", (char *)mem[i]);
     if (i % 16 == 0)
       printf("\n");
   }
