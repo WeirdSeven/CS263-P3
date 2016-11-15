@@ -26,6 +26,14 @@ pcap_t *global_phandle = NULL;
 
 
 void SIGINT_handler(int signum) {
+	if (global_seq == 0 || 
+		global_ack == 0 ||
+		global_headers == NULL ||
+		global_phandle == NULL) {
+		printf("Cannot send BOOM packet at this moment.\n");
+		exit(1);
+	}
+
 	char errbuf[LIBNET_ERRBUF_SIZE]; 
 	libnet_t *l = libnet_init(LIBNET_RAW4, global_dev_name, errbuf);
 	if (l == NULL) {
