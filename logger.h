@@ -21,6 +21,7 @@ void print_hex_memory(const void *mem, int len) {
 }
 
 char *get_flag_string(u_char tcp_flags) {
+	printf("begin\n");
 	char *str = "";
 	if ((tcp_flags & TCP_FIN) != 0) {
 		strcat(str, "FIN ");
@@ -46,10 +47,12 @@ char *get_flag_string(u_char tcp_flags) {
 	if ((tcp_flags & TCP_CWR) != 0) {
 		strcat(str, "CWR ");
 	}
+	printf("middle\n");
 	int str_len = strlen(str);
 	if (str_len != 0) {
 		str[str_len - 1] = '\0';
 	}
+	printf("end\n");
 	return str;
 }
 
