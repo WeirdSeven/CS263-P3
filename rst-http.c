@@ -109,13 +109,14 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	char *temp = get_ip_address(dev_name);
+	/*char *temp = get_ip_address(dev_name);
 	char *ip_address = (char *)malloc(strlen(temp) + 1);
 	strcpy(ip_address, temp);
 	printf("IP: [%s].\n", ip_address);
 	char filter_expr[200];
 	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
-	strcat(filter_expr, ip_address);
+	strcat(filter_expr, ip_address);*/
+	char *filter_expr = "not port 22";
 	printf("Filter expression: %s\n", filter_expr);
 	apply_filter(phandle, filter_expr);
 
