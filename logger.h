@@ -33,7 +33,7 @@ void log_headers(struct hdrs *headers) {
 															    ntohs(ip_header->ip_len) - (ip_header->ip_hlen) * 4, 
 															    headers->protocol);
 
-	swtich (ip_header->protocol) {
+	swtich (ip_header->ip_protocol) {
 		case IP_ICMP:
 			break;
 		case IP_TCP:
