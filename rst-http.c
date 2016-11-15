@@ -40,6 +40,8 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 	struct tcp_hdr *tcp_header = headers->tcp_header;
 	struct ip_hdr *ip_header = headers->ip_header;	
 
+	char payload[1] = "a";
+
 	*tcp_tag = libnet_build_tcp(ntohs(tcp_header->tcp_dst_port),
 				              ntohs(tcp_header->tcp_src_port),
 				              ntohl(tcp_header->tcp_ack) + 1,
@@ -49,8 +51,8 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 				              0,
 				              0,
 				              20,
-				              NULL,
-				              0,
+				              payload,
+				              1,
 				              l,
 				              *tcp_tag);
 	if (*tcp_tag == -1) {
@@ -67,7 +69,7 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 	printf("Building: ip_src_address: %s\n", ip_src_addr);
 	printf("Building: ip_dst_address: %s\n", ip_dst_addr);
 
-
+	
 
 	*ipv4_tag = libnet_build_ipv4(40,
 								 0,
