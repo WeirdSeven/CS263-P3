@@ -17,6 +17,12 @@
 #include "analyzer.h"
 #include "logger.h"
 
+pcap_t *global_phandle;
+
+void SIGINT_handler(int num) {
+	pcap_breakloop(global_phandle);
+}
+
 char *get_ip_address(char *interface) {
 	int fd;
 	struct ifreq ifr;
@@ -55,17 +61,6 @@ int send_rst_packet(struct hdrs *headers, libnet_t *l, libnet_ptag_t *tcp_tag, l
 		printf("Can't build TCP header: %s\n", libnet_geterror(l));
 		exit(1);
 	}
-
-	/*char *temp = inet_ntoa(ip_header->ip_src_addr);
-	char *ip_src_addr = (char *)malloc(strlen(temp) + 1);
-	strcpy(ip_src_addr, temp);
-	temp = inet_ntoa(ip_header->ip_dst_addr);
-	char *ip_dst_addr = (char *)malloc(strlen(temp) + 1);
-	strcpy(ip_dst_addr, temp);
-	printf("Building: ip_src_address: %s\n", ip_src_addr);
-	printf("Building: ip_dst_address: %s\n", ip_dst_addr);*/
-
-	
 
 	*ipv4_tag = libnet_build_ipv4(40, //IP packet length
 								 0, //type of service
@@ -116,11 +111,11 @@ int main(int argc, char **argv) {
 		printf("Error: %s\n", errbuf);
 		exit(1);
 	}
+	global_phandle = phandle;
 
 	char *temp = get_ip_address(dev_name);
 	char *ip_address = (char *)malloc(strlen(temp) + 1);
 	strcpy(ip_address, temp);
-	printf("IP: [%s].\n", ip_address);
 	char filter_expr[200];
 	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
 	strcat(filter_expr, ip_address);
@@ -135,12 +130,13 @@ int main(int argc, char **argv) {
 	if (l == NULL) {
 		printf("libnet_init(): %s\n", errbuf2);
 		exit(1);
-	}
+	} 
 
 	libnet_ptag_t tcp_tag = LIBNET_PTAG_INITIALIZER;
 	libnet_ptag_t ipv4_tag = LIBNET_PTAG_INITIALIZER;
 
 	int res;
+	struct hdrs *headers;
     while((res = pcap_next_ex(phandle, &header, &pkt_data)) >= 0){ 
         // 0 means that libpcap's read timeout expired
         if(res == 0)
@@ -148,7 +144,7 @@ int main(int argc, char **argv) {
 
         printf("Packet captured!\n");
 
-        struct hdrs *headers = analyze_packet(pkt_data);
+        *headers = analyze_packet(pkt_data);
 
         log_headers(headers);
 
@@ -161,11 +157,14 @@ int main(int argc, char **argv) {
         printf("An error occurred while reading the packet.\n");
         exit(1);
     } else if (res == -2) {
+    	free(ip_address);
+    	free(header);
+    	free(pkt_data);
+    	free(headers);
     	libnet_destroy(l);
-        // TODO
+        pcap_close(phandle);
+        printf("All resources deallocated.\n");
     }
-
-
 
 	return 0;
 }
