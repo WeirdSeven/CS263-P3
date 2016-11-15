@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
 
         printf("Packet captured!\n");
 
-        *headers = analyze_packet(pkt_data);
+        headers = analyze_packet(pkt_data);
 
         log_headers(headers);
 
@@ -158,8 +158,6 @@ int main(int argc, char **argv) {
         exit(1);
     } else if (res == -2) {
     	free(ip_address);
-    	free(header);
-    	free(pkt_data);
     	free(headers);
     	libnet_destroy(l);
         pcap_close(phandle);
