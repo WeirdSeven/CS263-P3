@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
 	strcpy(ip_address, temp);
 	printf("IP: [%s].\n", ip_address);
 	char filter_expr[200];
-	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] == tcp-ack and dst host ");
+	strcpy(filter_expr, "tcp src port 8181 and tcp[tcpflags] & tcp-ack != 0 and dst host ");
 	strcat(filter_expr, ip_address);
 	//char *filter_expr = "not port 22";
 	printf("Filter expression: %s\n", filter_expr);
@@ -157,6 +157,11 @@ int main(int argc, char **argv) {
 
         struct hdrs *headers = analyze_packet(pkt_data);
         log_headers(headers);
+
+        if (header->tcp_header && (header->tcp_header->flags & TCP_RST != 0)) {
+        	res = -2;
+        	break;
+        }
 
         //char *temp2 = inet_ntoa(headers->ip_header->ip_src_addr);
         //char *source_ip_address = (char *)malloc(strlen(temp2) + 1);
